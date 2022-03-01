@@ -16,10 +16,11 @@ const fetchMobileData = async () => {
             const data = await res.json()  
             setTimeout(()=>{
                 if(data.status ===true){
-                    showData(data.data);
+                    showData(data.data,searchData);
                 }else{
+                    displaySpinner(false);
                     displayError('No Result Found')
-                    console.log(data);
+
                 }
             },500)          
         }
@@ -53,25 +54,25 @@ const mobileDetail = async (slug) =>{
 }
 
 // Function for show data 
-const showData = data =>{
+const showData = (data,searchText) =>{
     displaySpinner(false);
 
     const resultContainer = document.getElementById('result')
-    resultContainer.innerHTML=''
+    resultContainer.innerHTML=`<div class="text-center mt-3 fw-bold fs-2">Search Result For: ${searchText.charAt(0).toUpperCase()+searchText.slice(1)}</div>`
     data.forEach((mobile,i) =>{
         if(i<20){
         const resultdiv = document.createElement('div')
         resultdiv.classList.add('col-md-4')
-        resultdiv.innerHTML =`  <div class="card mt-3">
-        <img src="${mobile.image}" class="card-img-top p-3 img-fluid  " 
+        resultdiv.innerHTML =`<div class="card shadow mt-3">
+        <div class="text-center"><img src="${mobile.image}" class="card-img-top p-3 img-fluid  " 
         style="width: 18rem; border-radius: 10px 10px 0 0"
-          alt="...">
+        alt="..."></div>
         <div class="card-body">
-        <p class="card-text">
-          <span class="badge bg-info text-white">${mobile.brand}</span>
-        </p>
-        <h5 class="card-title mb-3">${mobile.phone_name}</h5>
-        <button onclick="mobileDetail('${mobile.slug}')" type="button" class="w-100 btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Explore</button>
+            <p class="card-text">
+            <span class="badge bg-info text-white">${mobile.brand}</span>
+            </p>
+            <h5 class="card-title mb-3">${mobile.phone_name}</h5>
+            <button onclick="mobileDetail('${mobile.slug}')" type="button" class="w-100 btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Explore</button>
         </div>
         </div>`;
     
@@ -89,30 +90,31 @@ const showMobileDetail = (mobile) =>{
     mobileDetailSection.innerHTML = '';
     const divSection = document.createElement('div');
     divSection.classList.add('modal-content')
-    // <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
-
+ 
     divSection.innerHTML =` 
-      <div class="modal-header text-right"> 
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-    <div class="modal-header d-flex justify-content-center align-items-center">
-    <h5 class="modal-title" id="exampleModalLabel"><img class="img-fluid" src="${mobile.image}"></h5>  
-
+    <div class="modal-header"> 
+        <span class="text-left fs-4"><td class="py-3">${mobile.name}</td></span>
+        <span class="text-right">
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </span>
     </div>
-
+    <div class="modal-header d-flex justify-content-center align-items-center">
+        <h5 class="modal-title" id="exampleModalLabel">
+            <img class="img-fluid" src="${mobile.image}">
+        </h5>  
     </div>
       <div class="modal-body mt-3">
         <table class="table table-striped">
             <tbody>
                 <tr>
                     <th class="py-3" scope="row">Brand:</th>
-                        <td class="py-3">${mobile.brand}</td>
-                    </tr>
-                    <tr>
+                    <td class="py-3">${mobile.brand}</td>
+                </tr>
+                <tr>
                     <th class="py-3" scope="row">Name:</th>
                     <td class="py-3">${mobile.name}</td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <th class="py-3" scope="row">Release Date:</th>
                     <td class="py-3" colspan="2">${mobile.releaseDate?mobile.releaseDate:'No Release Date Found'}</td>
                 </tr>
@@ -123,25 +125,25 @@ const showMobileDetail = (mobile) =>{
             <tbody>
                 <tr>
                     <th class="py-3" scope="row">Storage:</th>
-                        <td class="py-3">${mobile.mainFeatures.storage}</td>
-                    </tr>
-                    <tr>
+                    <td class="py-3">${mobile.mainFeatures.storage}</td>
+                </tr>
+                <tr>
                     <th class="py-3" scope="row">Display:</th>
                     <td class="py-3">${mobile.mainFeatures.displaySize}</td>
-                    </tr>
-                    <tr>
+                </tr>
+                <tr>
                     <th class="py-3" scope="row">Chip Set:</th>
                     <td class="py-3">${mobile.mainFeatures.chipSet}</td>
-                    </tr>
-                    <tr>
-                        <th class="py-3" scope="row">Memory:</th>
-                        <td class="py-3">${mobile.mainFeatures.memory}</td>
-                    </tr>  
-                    <tr>
-                        <th class="py-3" scope="row">Sensors:</th>
-                        <td class="py-3" id="sensorID">
-                        </td>
-                    </tr>
+                </tr>
+                <tr>
+                    <th class="py-3" scope="row">Memory:</th>
+                    <td class="py-3">${mobile.mainFeatures.memory}</td>
+                </tr>  
+                <tr>
+                    <th class="py-3" scope="row">Sensors:</th>
+                    <td class="py-3" id="sensorID">
+                    </td>
+                </tr>
             </tbody>
             </table>
             ${ mobile?.others?`
@@ -210,7 +212,7 @@ const displaySpinner = (msg)=>{
     if(msg){
     spinner.classList.remove('d-none')    
     spinner.classList.add('d-block')
-    }else{
+}else{
     spinner.classList.remove('d-block')
     spinner.classList.add('d-none')
 
