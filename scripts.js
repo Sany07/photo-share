@@ -1,6 +1,4 @@
 
-
-
 // function for search phone
 
 const fetchMobileData = async () => {
@@ -20,13 +18,11 @@ const fetchMobileData = async () => {
                 }else{
                     displaySpinner(false);
                     displayError('No Result Found')
-
                 }
             },500)          
         }
         catch(e){
             displaySpinner(false);
-
             displayError('Something went Wrong, Please try again')
 
         }
@@ -34,7 +30,6 @@ const fetchMobileData = async () => {
         displayError('Please Enter Search Text')
     }
 }
-
 document.getElementById('btn-search').addEventListener('click',fetchMobileData)
 
 // Handle Functionality for mobile Detail
@@ -46,25 +41,29 @@ const mobileDetail = async (slug) =>{
         const data = await res.json()
         if(data.status === true){
             showMobileDetail(data.data)
+        }else{
+            showMobileDetail(false)
         }
 
     }catch(e){
-        console.log('e');
+        showMobileDetail(false)
+
     }
 }
 
-// Function for show data 
+// Function for Display Data 
 const showData = (data,searchText) =>{
     displaySpinner(false);
 
     const resultContainer = document.getElementById('result')
     resultContainer.innerHTML=`<div class="text-center mt-3 fw-bold fs-2">Search Result For: ${searchText.charAt(0).toUpperCase()+searchText.slice(1)}</div>`
+    
     data.forEach((mobile,i) =>{
         if(i<20){
         const resultdiv = document.createElement('div')
         resultdiv.classList.add('col-md-4')
         resultdiv.innerHTML =`<div class="card shadow mt-3">
-        <div class="text-center"><img src="${mobile.image}" class="card-img-top p-3 img-fluid  " 
+        <div class="text-center"><img src="${mobile.image}" class="w-50 card-img-top p-3 img-fluid  " 
         style="width: 18rem; border-radius: 10px 10px 0 0"
         alt="..."></div>
         <div class="card-body">
@@ -72,7 +71,8 @@ const showData = (data,searchText) =>{
             <span class="badge bg-info text-white">${mobile.brand}</span>
             </p>
             <h5 class="card-title mb-3">${mobile.phone_name}</h5>
-            <button onclick="mobileDetail('${mobile.slug}')" type="button" class="w-100 btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal">Explore</button>
+            <button id="explore" onclick="mobileDetail('${mobile.slug}')" type="button" class="w-100 btn btn-danger text-white" data-bs-toggle="modal" data-bs-target="#exampleModal"
+            >Explore</button>
         </div>
         </div>`;
     
@@ -90,7 +90,18 @@ const showMobileDetail = (mobile) =>{
     mobileDetailSection.innerHTML = '';
     const divSection = document.createElement('div');
     divSection.classList.add('modal-content')
- 
+
+    if(!mobile){
+        divSection.innerHTML =` 
+        <div class="modal-header"> 
+            <span class="text-left fs-6"><td class="py-3">Something went Wrong, Please try again.</td></span>
+            <span class="text-right">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </span>
+        </div>`    
+        mobileDetailSection.appendChild(divSection);
+
+    }
     divSection.innerHTML =` 
     <div class="modal-header"> 
         <span class="text-left fs-4"><td class="py-3">${mobile.name}</td></span>
@@ -100,7 +111,7 @@ const showMobileDetail = (mobile) =>{
     </div>
     <div class="modal-header d-flex justify-content-center align-items-center">
         <h5 class="modal-title" id="exampleModalLabel">
-            <img class="img-fluid" src="${mobile.image}">
+            <img class="img-fluid w-75" src="${mobile.image}">
         </h5>  
     </div>
       <div class="modal-body mt-3">
@@ -199,7 +210,6 @@ const showSensor=(sensors,sID)=>{
 
 const displayError = (error) =>{
     const messageContainer = document.getElementById('result');
-
     messageContainer.innerHTML='';
     messageContainer.innerHTML= `<div class="alert alert-danger" role="alert">${error}.
 </div>`
