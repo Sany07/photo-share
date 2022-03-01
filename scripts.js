@@ -51,8 +51,6 @@ const showData = data =>{
     resultContainer.innerHTML=''
     data.forEach((mobile,i) =>{
         if(i<20){
-        console.log(i);
-
         const resultdiv = document.createElement('div')
         resultdiv.classList.add('col-md-4')
         resultdiv.innerHTML =`  <div class="card mt-3">
@@ -77,23 +75,81 @@ const showData = data =>{
 // Function for handle phone data
 
 const showMobileDetail = (mobile) =>{
-    console.log(mobile);
+
     const mobileDetailSection = document.getElementById('modal-d');
     mobileDetailSection.innerHTML = '';
     const divSection = document.createElement('div');
     divSection.classList.add('modal-content')
-    divSection.innerHTML =` 
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">${mobile.name}</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        sany
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-      </div>
-      `
+    // <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
 
+    divSection.innerHTML =` 
+      <div class="modal-header d-flex justify-content-sc align-items-right">
+        <h5 class="modal-title" id="exampleModalLabel"><img class="img-fluid" src="${mobile.image}"></h5>  
+        <div class="text-right">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+    </div>
+
+        </div>
+      <div class="modal-body mt-3">
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">Brand:</th>
+                        <td>${mobile.brand}</td>
+                    </tr>
+                    <tr>
+                    <th scope="row">Name:</th>
+                    <td>${mobile.name}</td>
+                    </tr>
+                    <tr>
+                    <th scope="row">Release Date:</th>
+                    <td colspan="2">${mobile.releaseDate?mobile.releaseDate:'No Release Date Found'}</td>
+                </tr>
+            </tbody>
+        </table>
+        <h4 class="p-2">Features:</h4>
+        <table class="table">
+            <tbody>
+                <tr>
+                    <th scope="row">Storage:</th>
+                        <td>${mobile.mainFeatures.storage}</td>
+                    </tr>
+                    <tr>
+                    <th scope="row">Display:</th>
+                    <td>${mobile.mainFeatures.displaySize}</td>
+                    </tr>
+                    <tr>
+                    <tr>
+                    <th scope="row">Chip Set:</th>
+                    <td>${mobile.mainFeatures.chipSet}</td>
+                    </tr>
+                    <tr>
+                        <th scope="row">Memory:</th>
+                        <td>${mobile.mainFeatures.memory}</td>
+                    </tr>
+                    </tr>  
+                    <tr>
+                        <th scope="row">Sensors:</th>
+                        <td id="sensorID">
+                        </td>
+
+                    </tr>
+            </tbody>
+        </div>
+      `
     mobileDetailSection.appendChild(divSection)
+
+    const sID = document.getElementById('sensorID')
+    showSensor(mobile.mainFeatures.sensors,sID)
+
+}
+
+const showSensor=(sensors,sID)=>{
+
+    sensors.forEach(sensor =>{
+        const sensorSpan = document.createElement('span')
+
+        sensorSpan.innerHTML = `${sensor}, `
+        sID.appendChild(sensorSpan)
+    })
 }
