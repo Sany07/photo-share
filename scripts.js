@@ -5,25 +5,32 @@
 
 const fetchMobileData = async () => {
     const searchData = document.getElementById('search').value
-
+    const resultContainer = document.getElementById('result')
+    resultContainer.innerHTML=''
     if(searchData){
-
         const url = `https://openapi.programming-hero.com/api/phones?search=${searchData}`
-
+        
         try{
             const res = await fetch(url)
-            const data = await res.json()
-            if(data.status ===true){
-                showData(data.data);
-            }else{
-                alert(data.status)
-            }
+            displaySpinner(true);
+            const data = await res.json()  
+            setTimeout(()=>{
+                if(data.status ===true){
+                    showData(data.data);
+                }else{
+                    displayError('No Result Found')
+                    console.log(data);
+                }
+            },500)          
         }
         catch(e){
-            console.log(e);
+            displaySpinner(false);
+
+            displayError('Something went Wrong, Please try again')
+
         }
     }else{
-        alert('Please Enter Search Text')
+        displayError('Please Enter Search Text')
     }
 }
 
@@ -47,6 +54,8 @@ const mobileDetail = async (slug) =>{
 
 // Function for show data 
 const showData = data =>{
+    displaySpinner(false);
+
     const resultContainer = document.getElementById('result')
     resultContainer.innerHTML=''
     data.forEach((mobile,i) =>{
@@ -83,73 +92,127 @@ const showMobileDetail = (mobile) =>{
     // <button type="button" class="btn-close"  data-bs-dismiss="modal" aria-label="Close"></button>
 
     divSection.innerHTML =` 
-      <div class="modal-header d-flex justify-content-sc align-items-right">
-        <h5 class="modal-title" id="exampleModalLabel"><img class="img-fluid" src="${mobile.image}"></h5>  
-        <div class="text-right">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      <div class="modal-header text-right"> 
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+    <div class="modal-header d-flex justify-content-center align-items-center">
+    <h5 class="modal-title" id="exampleModalLabel"><img class="img-fluid" src="${mobile.image}"></h5>  
+
     </div>
 
-        </div>
+    </div>
       <div class="modal-body mt-3">
-        <table class="table">
+        <table class="table table-striped">
             <tbody>
                 <tr>
-                    <th scope="row">Brand:</th>
-                        <td>${mobile.brand}</td>
+                    <th class="py-3" scope="row">Brand:</th>
+                        <td class="py-3">${mobile.brand}</td>
                     </tr>
                     <tr>
-                    <th scope="row">Name:</th>
-                    <td>${mobile.name}</td>
+                    <th class="py-3" scope="row">Name:</th>
+                    <td class="py-3">${mobile.name}</td>
                     </tr>
                     <tr>
-                    <th scope="row">Release Date:</th>
-                    <td colspan="2">${mobile.releaseDate?mobile.releaseDate:'No Release Date Found'}</td>
+                    <th class="py-3" scope="row">Release Date:</th>
+                    <td class="py-3" colspan="2">${mobile.releaseDate?mobile.releaseDate:'No Release Date Found'}</td>
                 </tr>
             </tbody>
         </table>
         <h4 class="p-2">Features:</h4>
-        <table class="table">
+        <table class="table table-striped">
             <tbody>
                 <tr>
-                    <th scope="row">Storage:</th>
-                        <td>${mobile.mainFeatures.storage}</td>
+                    <th class="py-3" scope="row">Storage:</th>
+                        <td class="py-3">${mobile.mainFeatures.storage}</td>
                     </tr>
                     <tr>
-                    <th scope="row">Display:</th>
-                    <td>${mobile.mainFeatures.displaySize}</td>
+                    <th class="py-3" scope="row">Display:</th>
+                    <td class="py-3">${mobile.mainFeatures.displaySize}</td>
                     </tr>
                     <tr>
-                    <tr>
-                    <th scope="row">Chip Set:</th>
-                    <td>${mobile.mainFeatures.chipSet}</td>
+                    <th class="py-3" scope="row">Chip Set:</th>
+                    <td class="py-3">${mobile.mainFeatures.chipSet}</td>
                     </tr>
                     <tr>
-                        <th scope="row">Memory:</th>
-                        <td>${mobile.mainFeatures.memory}</td>
-                    </tr>
+                        <th class="py-3" scope="row">Memory:</th>
+                        <td class="py-3">${mobile.mainFeatures.memory}</td>
                     </tr>  
                     <tr>
-                        <th scope="row">Sensors:</th>
-                        <td id="sensorID">
+                        <th class="py-3" scope="row">Sensors:</th>
+                        <td class="py-3" id="sensorID">
                         </td>
-
                     </tr>
             </tbody>
+            </table>
+            ${ mobile?.others?`
+            <table class="table table-striped">
+            <h4 class="p-2">Others:</h4>
+                <tbody>
+                    <tr>
+                       <th class="py-3" scope="row">WLAN:</th>
+                       <td class="py-3">${mobile.others?.WLAN?mobile.others.WLAN:'N/D'}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-3" scope="row">Bluetooth:</th>
+                        <td class="py-3">${mobile.others?.Bluetooth?mobile.others.Bluetooth:'N/D'}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-3" scope="row">GPS:</th>
+                        <td class="py-3">${mobile.others?.GPS?mobile.others.GPS:'N/D'}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-3" scope="row">NFC:</th>
+                        <td class="py-3">${mobile.others?.NFC?mobile.others.NFC:'N/D'}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-3" scope="row">Bluetooth:</th>
+                        <td class="py-3">${mobile.others?.Radio?mobile.others.Radio:'N/D'}</td>
+                    </tr>
+                    <tr>
+                        <th class="py-3" scope="row">Bluetooth:</th>
+                        <td class="py-3">${mobile.others?.USB?mobile.others.USB:'N/D'}</td>
+                    </tr>
+            </tbody>
+            </table>
+        `:''}
         </div>
       `
     mobileDetailSection.appendChild(divSection)
-
     const sID = document.getElementById('sensorID')
-    showSensor(mobile.mainFeatures.sensors,sID)
-
+    showSensor(mobile.mainFeatures?.sensors,sID)
 }
 
+// Functionality for handle Sensors Data
 const showSensor=(sensors,sID)=>{
-
-    sensors.forEach(sensor =>{
+    sensors?.forEach(sensor =>{
         const sensorSpan = document.createElement('span')
 
         sensorSpan.innerHTML = `${sensor}, `
         sID.appendChild(sensorSpan)
     })
+}
+
+
+// Functionality For Error Message
+
+const displayError = (error) =>{
+    const messageContainer = document.getElementById('result');
+
+    messageContainer.innerHTML='';
+    messageContainer.innerHTML= `<div class="alert alert-danger" role="alert">${error}.
+</div>`
+}
+
+// Spinner
+
+const displaySpinner = (msg)=>{
+    const spinner = document.getElementById('spinner');
+    if(msg){
+    spinner.classList.remove('d-none')    
+    spinner.classList.add('d-block')
+    }else{
+    spinner.classList.remove('d-block')
+    spinner.classList.add('d-none')
+
+    }
 }
